@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import AddRecipe from "./Components/AddRecipe";
+import CardRecipe from "./Components/CardRecipe/CardRecipe";
+import Header from "./Components/Header";
+import { Grid, Typography } from '@material-ui/core';
+import ListRecipe from "./Components/ListRecipe/ListRecipe";
+import RecipeInfo from "./Components/RecipeInfo/RecipeInfo";
+import { BrowserRouter, Route, Switch,withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { GetRecipes } from './Store/Actions'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  componentDidMount(){
+    this.props.GetRecipes()
+  }
+  render() {
+    let isGrid = 'row';
+    if(this.props.location.pathname === '/listrecipe'){
+      isGrid = 'column';
+    }
+    return (
+      <BrowserRouter>
+      <Header />
+        <Grid container>
+          <Grid item sm={1}></Grid>
+          <Grid direction={isGrid} container item sm={10}>
+            <Switch>
+              <Route path="/listrecipe" component={ListRecipe}></Route>
+              <Route path="/recipeinfo/:id" component={RecipeInfo}></Route>
+              <Route path="/create" component={AddRecipe}></Route>
+              <Route exact path="/" component={CardRecipe}></Route>
+            </Switch>
+          </Grid>
+          <Grid item sm={1}></Grid>
+        </Grid>
+        <Typography align="center" className="footer">Made with <span>❤</span> in Sheryians.</Typography>
+      </BrowserRouter>
+    );
+  }
 }
 
-export default App;
+const mapDispatchToProps = ({ 
+  GetRecipes
+})
+export default connect(null,mapDispatchToProps)(withRouter(App));
